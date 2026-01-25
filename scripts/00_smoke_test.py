@@ -1,6 +1,6 @@
 import sys
 from pathlib import Path
-PROJECT_ROOT = Path(__file__).resolve().parents[1] # add project root to sys.path so `import src.<FOLDER>` works
+PROJECT_ROOT = Path(__file__).resolve().parents[1]  # add project root to sys.path so `import src.<FOLDER>` works
 sys.path.insert(0, str(PROJECT_ROOT))
 
 ###################################################################################
@@ -8,24 +8,36 @@ sys.path.insert(0, str(PROJECT_ROOT))
 # Author : Frank Runfola
 # Date   : 1/25/2026
 # ---------------------------------------------------------------------------------
-# Run cmd: 
-#   cd /projects/pyspark-local-intro    
+# Run cmd:
+#   cd /projects/pyspark-local-intro
 #   python -m scripts.00_smoke_test
 # ---------------------------------------------------------------------------------
 # Description:
-#   confirm Spark runs locally and you can create a DataFrame.
+#   Smoke test:
+#   - confirm Spark starts locally
+#   - confirm you can create a DataFrame from in-memory Python data
+#   - confirm explicit schema works (no type guessing surprises)
 ###################################################################################
 
-from src.spark_utils import get_spark
-from pyspark.sql.types import StructType, StructField, IntegerType, StringType, DoubleType, DateType
 from datetime import date
-spark = get_spark("00_smoke_test")
+from pyspark.sql.types import (
+    StructType, StructField,
+    IntegerType, StringType, DoubleType, DateType
+)
+from src.spark_utils import get_spark
 
-#######################################################################
-# 1) Data as a Python list (each item = one row)
-#-------------------------------------------------------
-# customer_id,  name,  state,  amount,  order_date
-#######################################################################
+spark = get_spark("00_smoke_test")
+spark.sparkContext.setLogLevel("ERROR")  # reduce Spark startup noise for local runs
+
+###################################################################################
+# 1) Data as a Python list (each tuple = one row)
+# Why:
+# - quickest way to prove Spark + PySpark are working
+# - no files needed; isolates environment/setup issues
+#
+# Row format:
+#   customer_id, name, state, amount, order_date
+###################################################################################
 rows = [
     (101, "Alice",  "NY", 120.50, date(2026, 1, 10)),
     (102, "Bob",    "CA",  75.00, date(2026, 1, 12)),
@@ -79,9 +91,12 @@ rows = [
     (150, "Aria",   "CA", 135.35, date(2026, 3,  6)),
 ]
 
-#######################################################################
+###################################################################################
 # 2) Explicit schema (prevents Spark from guessing types wrong)
-#######################################################################
+# Why:
+# - schema inference can guess incorrectly (especially dates/ints/decimals)
+# - explicit schema makes your pipeline stable and predictable
+###################################################################################
 schema = StructType([
     StructField("customer_id", IntegerType(), nullable=False),
     StructField("name",        StringType(),  nullable=False),
@@ -89,13 +104,27 @@ schema = StructType([
     StructField("amount",      DoubleType(),  nullable=False),
     StructField("order_date",  DateType(),    nullable=False),
 ])
-#######################################################################
+
+###################################################################################
 # 3) Create DataFrame
-#######################################################################
+# Why:
+# - proves Spark can materialize a DataFrame using your schema + data
+###################################################################################
 df = spark.createDataFrame(rows, schema)
 
 print(f"\nSpark version: {spark.version}\n")
 
-df.show(n=5, truncate=True)  # Show first 5 rows with truncation at 20 chars
-print("")
+# Show schema first (types) so you can confirm the schema is applied correctly
+print("--- DataFrame schema ---")
+df.printSchema()
+
+# Show a small sample of rows (n=5) for quick confirmation
+print("\n--- DataFrame sample rows ---")
+df.show(n=5, truncate=True)
+
+# Quick sanity check: row count (action)
+print("\n--- Row count ---")
+print("rows:", df.count())
+
+# Always stop SparkSession to release resources (important on local runs)
 spark.stop()
