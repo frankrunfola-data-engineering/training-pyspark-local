@@ -142,11 +142,9 @@ from pyspark.sql import SparkSession
 def get_spark(app_name: str = "pyspark-local-intro") -> SparkSession:
     return (
         SparkSession.builder
-        .appName(app_name)
-        # Local mode; use all CPU cores available
-        .master("local[*]")
-        # Keep local runs snappy and predictable
-        .config("spark.sql.shuffle.partitions", "4")
+        .appName(app_name)  
+        .master("local[*]")                           # Local mode; use all cores available
+        .config("spark.sql.shuffle.partitions", "4")  # Keep things snappy and deterministic for small local runs
         .getOrCreate()
     )
 ```
@@ -235,20 +233,8 @@ Keep it readable. The goal is clean logic, not fancy tricks.
 
 ---
 
-## 9) Suggested `.gitignore`
 
-```gitignore
-.venv/
-__pycache__/
-*.pyc
-data/out/
-.vscode/
-.DS_Store
-```
-
----
-
-## 10) Common Problems (and fixes)
+## 9) Common Problems (and fixes)
 
 - **Java not found** → Spark won’t start  
   Fix: install a JDK and confirm `java -version`.
@@ -264,7 +250,7 @@ data/out/
 
 ---
 
-## 11) Next Step (turn this into portfolio-grade)
+## 10) Next Step (turn this into portfolio-grade)
 
 If you want this to look like real DE work without making it huge:
 
