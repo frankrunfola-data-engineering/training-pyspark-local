@@ -2,17 +2,17 @@ import sys
 import time
 from pathlib import Path
 
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(PROJECT_ROOT))
 
 #########################################################################
-# File   : 08_exercises_performance_debugging.py
+# File   : scripts/08_performance_debugging/08_exercises_performance_debugging.py
 # Author : Frank Runfola
 # Date   : 1/25/2026
 # -----------------------------------------------------------------------
 # Run cmd:
 #   cd /projects/pyspark-local-intro
-#   python -m scripts.08_exercises_performance_debugging
+#   python -m scripts.08_performance_debugging.08_exercises_performance_debugging
 # -----------------------------------------------------------------------
 # Description:
 #   Performance + debugging drills (Spark DE interview prep).

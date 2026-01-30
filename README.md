@@ -1,16 +1,21 @@
 # pyspark-local-intro — PySpark Training (Local VS Code)
 
-Run a small PySpark mini-project locally in VS Code: read CSVs, clean/quarantine, aggregate KPIs, and join outputs.
+Run a small PySpark project locally in VS Code: read CSVs, clean/quarantine, build KPIs, and join outputs.  
+This repo is **local-first**, but the bottom section shows how to explain/port it to **Azure (ADLS + ADF + Databricks)**.
+
+---
 
 ## Prereqs
-- Python 3.10+
-- Java (required by Spark)
+- **Python 3.10+**
+- **Java** (required by Spark)
 
 Verify:
 ```bash
 python --version
 java -version
 ```
+
+---
 
 ## Setup
 
@@ -26,38 +31,87 @@ pip install -r requirements.txt
 
 **WSL/Linux/macOS**
 ```bash
-rm -rf .venv                            # Delete the existing .venv
-python3 -m venv .venv                   # Create the venv inside WSL
-source .venv/bin/activate               # Activate the venv (WSL)
-which python                            #Check Python:
+rm -rf .venv                            # delete existing venv (optional)
+python3 -m venv .venv                   # create venv
+source .venv/bin/activate               # activate
+which python
 python --version
-python3 -m pip install --upgrade pip    # Install deps inside the venv
+python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
 ### 2) VS Code interpreter
-- `Ctrl+Shift+P` → Python: Select Interpreter
-- Select `.venv`
+- `Ctrl+Shift+P` → **Python: Select Interpreter**
+- Select the `.venv`
 
+---
 
 ## Project layout
+
+> Spark writes outputs as **folders** (that’s normal).
+
 ```text
 pyspark-local-intro/
 ├─ data/
-│  ├─ raw/                  # input CSVs
-│  └─ out/                  # Spark outputs (folders)
+│  ├─ raw/                         # input CSVs
+│  └─ out/                         # Spark outputs (folders)
 ├─ scripts/
-│  ├─ 00_smoke_test.py
-│  ├─ 01_basics_df.py
-│  ├─ 02_cleaning.py
-│  ├─ 03_aggregations.py
-│  ├─ 04_joins.py
-│  └─ 05_exercises.py
+│  ├─ 01_foundations/
+│  │  ├─ __init__.py
+│  │  ├─ 01_smoke_test.py
+│  │  ├─ 02_basics_df.py
+│  │  ├─ 03_cleaning.py
+│  │  ├─ 04_aggregations.py
+│  │  └─ 05_joins.py
+│  ├─ 02_exercises/
+│  │  ├─ __init__.py
+│  │  ├─ 01_exercises.py
+│  │  └─ 02_exercises_advanced.py
+│  ├─ 03_engineering_patterns/
+│  │  ├─ __init__.py
+│  │  ├─ 01_schema_enforcement.py
+│  │  ├─ 02_json_parsing.py
+│  │  ├─ 03_arrays_explode.py
+│  │  ├─ 04_partitioned_writes.py
+│  │  ├─ 05_broadcast_cache_explain_rdd.py
+│  │  └─ 06_exercises_engineering_patterns.py
+│  ├─ 04_performance_debugging/
+│  │  ├─ __init__.py
+│  │  ├─ 01_explain_and_shuffles.py
+│  │  ├─ 02_broadcast_aqe_skew_salting.py
+│  │  ├─ 03_cache_persist_checkpoint.py
+│  │  ├─ 04_partition_pruning_small_files.py
+│  │  ├─ 05_debugging_playbook.py
+│  │  └─ 06_exercises_performance_debugging.py
+│  ├─ 05_incremental_delta_quality/
+│  │  ├─ __init__.py
+│  │  ├─ 01_delta_smoke_test.py
+│  │  ├─ 02_incremental_watermarks.py
+│  │  ├─ 03_quality_gates_quarantine_reasons.py
+│  │  ├─ 04_delta_merge_upsert.py
+│  │  ├─ 05_incremental_gold_kpis.py
+│  │  └─ 06_exercises_incremental_delta_quality.py
+│  └─ 06_spark_sql_advanced/
+│     ├─ __init__.py
+│     ├─ 01_temp_views_sql_basics.py
+│     ├─ 02_ctes.py
+│     ├─ 03_windows_dedupe.py
+│     ├─ 04_cohorts.py
+│     ├─ 05_sql_perf_hints.py
+│     └─ 06_exercises_sql_views.py
 ├─ src/
 │  └─ spark_utils.py
 ├─ requirements.txt
 └─ README.md
 ```
+
+### Scripts folder conventions
+- Each module is a folder: `01_...`, `02_...`, etc.
+- Inside each module:
+  - `01–05` = foundational scripts
+  - `06_*exercises*.py` = “capstone” exercises for that module (when applicable)
+
+---
 
 ## Sample data
 
@@ -84,83 +138,110 @@ txn_id,customer_id,txn_ts,amount,merchant
 1006,99,2025-03-07 09:15:00,42.00,UnknownShop
 ```
 
+---
+
 ## Run
 
-Run from repo root. Use module mode (no `.py` on the module name). Ensure `scripts/__init__.py` and `src/__init__.py` exist.
+Run from the repo root using module mode (no `.py` on the module name).
 
+✅ Requirements for module runs:
+- `scripts/__init__.py` exists
+- every module folder has `__init__.py`
+
+### 01 — Foundations (start here)
 ```bash
-python -m scripts.00_smoke_test
-python -m scripts.01_basics_df
-python -m scripts.02_cleaning
-python -m scripts.03_aggregations
-python -m scripts.04_joins
-python -m scripts.05_exercises
+python -m scripts.01_foundations.01_smoke_test
+python -m scripts.01_foundations.02_basics_df
+python -m scripts.01_foundations.03_cleaning
+python -m scripts.01_foundations.04_aggregations
+python -m scripts.01_foundations.05_joins
 ```
 
-Outputs land in `data/out/` (Spark writes folders; that’s normal).
-
-## What you learn
-- **00 — Smoke test**            : Spark runs locally + create a DataFrame
-- **01 — DataFrame basics**      : read CSVs + select/filter + derived columns
-- **02 — Cleaning + quarantine** : normalize + quarantine vs clean outputs
-- **03 — Aggregations**          : customer spend KPIs + ranking 
-- **04 — Joins**                 : join fact + dimension + KPI table
-- **05 — Exercises**             : implement TODOs (quality rules + KPIs + writes)
-
-## Exercises (05_exercises.py)
-Fill in the TODOs:
-- normalize names and create `full_name`
-- quarantine txns where `amount <= 0` or `customer_id` is missing/not found
-- build KPIs: `txn_count`, `total_spend`, `last_txn_ts`
-- write outputs to `data/out/`
-
-## Common issues
-- Java missing: `java -version` must work
-- Wrong interpreter in VS Code: select `.venv`
-- Running from wrong folder: run commands from repo root
-- Spark outputs folders, not single files
-
-## Git (optional)
-```text
-cd ~/projects/pyspark-local-intro
-git init
-git add .
-git commit -m "Initial PySpark local training project"
-git branch -M main
-git remote add origin https://github.com/frankrunfola-training/pyspark-local-intro.git
-git push -u origin main
+### 02 — Exercises
+```bash
+python -m scripts.02_exercises.01_exercises
+python -m scripts.02_exercises.02_exercises_advanced
 ```
+
+### 03–06 — Advanced modules
+```bash
+python -m scripts.03_engineering_patterns.06_exercises_engineering_patterns
+python -m scripts.04_performance_debugging.06_exercises_performance_debugging
+python -m scripts.05_incremental_delta_quality.06_exercises_incremental_delta_quality
+python -m scripts.06_spark_sql_advanced.06_exercises_sql_views
+```
+
+Outputs land in `data/out/`.
 
 ---
 
-## Advanced scripts (extra DE interview prep)
+## What you learn
 
-These scripts push beyond basic DataFrame transforms into topics hiring managers actually probe: windows, pivots, cohorts, performance, SQL fluency, incremental loads, logging, and data quality reporting.
+### 01_foundations
+- **01 — Smoke test**: Spark runs locally + create a DataFrame
+- **02 — DataFrame basics**: read CSVs + select/filter + derived columns
+- **03 — Cleaning + quarantine**: normalize + quarantine vs clean outputs
+- **04 — Aggregations**: customer spend KPIs + ranking
+- **05 — Joins**: join facts + dims + KPI table
 
-### New scripts
-- **06 — Advanced exercises**                : windows + dedupe + anti-joins + pivots + cohorts
-- **07 — Engineering patterns**              : explicit schema, JSON parsing, explode arrays, broadcast join, partitioned writes, cache/persist, basic RDDs
-- **08 — Performance + debugging**           : explain plans, shuffle vs broadcast, skew + salting, pruning, small files, checkpointing
-- **09 — Incremental + Delta + DQ**          : watermark incremental loads, quarantine reasons, FK checks, Delta MERGE (Silver), incremental Gold, run logs + DQ report
-- **10 — Spark SQL drills**                  : CTEs, CASE, windows, anti-joins, dedupe, cohorts, DQ counts (pure SQL)
+### 02_exercises
+- **01 — Exercises**: implement TODOs (quality rules + KPIs + writes)
+- **02 — Advanced exercises**: windows + dedupe + anti-joins + pivots + cohorts
 
-### Run (same pattern as before)
-```bash
-python -m scripts.06_exercises_advanced
-python -m scripts.07_exercises_engineering_patterns
-python -m scripts.08_exercises_performance_debugging
-python -m scripts.09_exercises_incremental_delta_quality
-python -m scripts.10_exercises_sql_views
-```
+### 03_engineering_patterns
+- Explicit schema + type safety
+- JSON parsing + nested fields
+- Arrays + explode patterns
+- Partitioned writes
+- Broadcast joins + cache/persist + `explain()` + a quick peek at RDDs
+
+### 04_performance_debugging
+- Shuffle vs broadcast (and when each wins)
+- AQE, skew, and salting patterns
+- Caching vs persisting vs checkpointing
+- Partition pruning + small file avoidance
+- A practical debugging playbook (what to check first)
+
+### 05_incremental_delta_quality
+- Watermark-based incremental loads
+- Quarantine with **reason codes** (the real-world way)
+- FK validation patterns
+- Delta MERGE upserts (idempotent)
+- Incremental Gold KPIs
+
+### 06_spark_sql_advanced
+- Temp views + Spark SQL muscle memory
+- CTEs and readable SQL transforms
+- Window functions for dedupe and “last known state”
+- Cohorts + retention-style queries
+- SQL performance hints and gotchas
+
+---
+
+## Exercises checklist
+
+If your exercises file has TODOs, implement these staples:
+- Normalize names and create `full_name`
+- Quarantine txns where `amount <= 0` or `customer_id` is missing/not found
+- Build KPIs: `txn_count`, `total_spend`, `last_txn_ts`
+- Write outputs to `data/out/`
+- Validate counts (rows in/out, quarantine %, null checks)
+
+---
+
+## Common issues
+- **Java missing**: `java -version` must work or Spark will not start
+- **Wrong interpreter in VS Code**: select `.venv`
+- **Running from wrong folder**: run commands from repo root
+- **Outputs are folders**: Spark writes directories, not single files
 
 ---
 
 ## Delta Lake (local pip PySpark)
 
-Exercises in `09_exercises_incremental_delta_quality.py` use **Delta MERGE**. Plain pyspark alone can’t do MERGE.
+Some scripts in `05_incremental_delta_quality` use **Delta MERGE**. Plain pyspark alone can’t do MERGE.
 
-### Install pinned compatible versions
-Pick one:
+### Install compatible versions (pick one)
 
 **Spark 3.5.x (common & stable)**
 ```bash
@@ -177,7 +258,7 @@ Check your Spark version:
 python -c "import pyspark; print(pyspark.__version__)"
 ```
 
-### IMPORTANT: enable Delta in SparkSession
+### Enable Delta in SparkSession
 Update `src/spark_utils.py` so Spark can load Delta:
 
 ```python
@@ -205,7 +286,7 @@ spark.range(1).write.format("delta").mode("overwrite").save("data/out/_delta_smo
 
 ## Testing (this is what juniors skip)
 
-A lot of DE teams expect you to have at least basic **unit tests** for transforms + data quality logic.
+A lot of DE teams expect at least basic **unit tests** for transforms + data quality logic.
 
 ### Install test deps
 ```bash
@@ -218,9 +299,6 @@ From repo root:
 pytest -q
 ```
 
-Tests live in:
-- `tests/test_pipeline_logic.py`
-
 ---
 
 ## Azure-ize (how to talk about this like a real DE project)
@@ -232,17 +310,17 @@ Use a clean lake layout:
 - `abfss://<container>@<account>.dfs.core.windows.net/bronze/customers/ingest_date=YYYY-MM-DD/`
 - `abfss://<container>@<account>.dfs.core.windows.net/bronze/txns/ingest_date=YYYY-MM-DD/`
 - `abfss://<container>@<account>.dfs.core.windows.net/silver/customers/`
-- `abfss://<container>@<account>.dfs.core.windows.net/silver/txns/`  *(Delta)*
+- `abfss://<container>@<account>.dfs.core.windows.net/silver/txns/` *(Delta)*
 - `abfss://<container>@<account>.dfs.core.windows.net/gold/daily_kpis/` *(Delta)*
 
 ### Orchestration (ADF)
 Typical ADF flow:
-1. **Copy activity** pulls raw files into **Bronze** (partitioned by ingest_date)
-2. **Databricks job** runs transforms:
+1. Copy activity pulls raw files into **Bronze** (partitioned by `ingest_date`)
+2. Databricks job runs transforms:
    - Bronze → Silver (clean + quarantine + FK checks)
    - Silver MERGE into Delta tables (idempotent upserts)
    - Gold aggregates updated incrementally
-3. **Logging** to a run log table (run_id, watermark_before/after, rows_in/out, quarantine counts)
+3. Logging to a run log table (`run_id`, watermark before/after, rows in/out, quarantine counts)
 
 ### Security (Managed Identity)
 - ADF + Databricks authenticate to ADLS using **Managed Identity**
@@ -252,7 +330,7 @@ Typical ADF flow:
 ### Backfills + retries (production mindset)
 - Parameterize runs by `run_date` (or date range)
 - Backfill by reprocessing a partition range
-- Retries should be safe because Silver/Gold are updated with **MERGE** (idempotent)
+- Retries are safe because Silver/Gold are updated with **MERGE** (idempotent)
 
 ### Cost basics (what interviewers like to hear)
 - Use job clusters with autoscaling and termination

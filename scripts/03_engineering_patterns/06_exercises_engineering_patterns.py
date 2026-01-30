@@ -1,17 +1,17 @@
 import sys
 from pathlib import Path
 
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(PROJECT_ROOT))
 
 #########################################################################
-# File   : 07_exercises_engineering_patterns.py
+# File   : scripts/07_engineering_patterns/07_exercises_engineering_patterns.py
 # Author : Frank Runfola
 # Date   : 1/25/2026
 # -----------------------------------------------------------------------
 # Run cmd:
 #   cd /projects/pyspark-local-intro
-#   python -m scripts.07_exercises_engineering_patterns
+#   python -m scripts.07_engineering_patterns.07_exercises_engineering_patterns
 # -----------------------------------------------------------------------
 # Description:
 #   Data Engineering-focused PySpark practice beyond basic filters/joins/KPIs.
