@@ -1,4 +1,4 @@
-# pyspark-local-intro — PySpark Training (Local VS Code)
+# training-pyspark-local — PySpark Training (Local VS Code)
 
 Run a small PySpark project locally in VS Code: read CSVs, clean/quarantine, build KPIs, and join outputs.  
 This repo is **local-first**, but the bottom section shows how to explain/port it to **Azure (ADLS + ADF + Databricks)**.
@@ -337,3 +337,4 @@ Typical ADF flow:
 - Prefer Delta + partition pruning to reduce scan costs
 - Avoid small files (coalesce/repartition before writes)
 - Use broadcast joins for small dimensions; watch skew on big keys
+
