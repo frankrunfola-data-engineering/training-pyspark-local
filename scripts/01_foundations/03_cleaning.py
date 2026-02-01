@@ -71,7 +71,7 @@ cust_clean = customers_std.subtract(cust_quarantine)
 #   - amount <= 0 (non-positive payment)
 #   - customer_id missing (can't link to a customer)
 ###################################################################################
-txn_quarantine = txns.where(
+txn_quarantine = txns.filter(
     (F.col("amount") <= 0) |
     (F.col("customer_id").isNull())
 )
