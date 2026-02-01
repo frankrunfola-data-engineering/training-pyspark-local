@@ -52,7 +52,7 @@ customers_std = (
 ###################################################################################
 # 2) Customer quarantine rules (basic but realistic)
 # Why quarantine:
-#   - you don't silently drop bad data
+#    - you don't silently drop bad data
 #    - you can measure quality and debug upstream issues
 ## Rule:
 #   - missing first_name (null or empty)

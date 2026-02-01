@@ -33,13 +33,19 @@ txns = (
 #########################################################################
 # EXERCISE 01 (Easy)
 #------------------------------------------------------------------------
-# Goal: Select specific columns from customers: customer_id, first_name, state
+# Goal: Select specific columns from customers, transaction
 #########################################################################
 ex01_df = (
     # TODO
-    customers.select("customer_id", "first_name", "state")
+    customers.select("customer_id", "first_name","last_name", "state","signup_date")
 )
-#ex01_df.show(truncate=False)
+ex01_df.show(n=3,truncate=False)
+
+ex01_df = (
+    # TODO
+    txns.select("txn_id", "customer_id","txn_ts", "amount","merchant")
+)
+ex01_df.show(n=3,truncate=False)
 
 #########################################################################
 # EXERCISE 02 (Easy)
@@ -47,11 +53,11 @@ ex01_df = (
 # Goal: Filter customers where state == "CA"
 # Return columns: customer_id, first_name, state
 #########################################################################
-ex02_df = (
-    # TODO
+# TODO
+'''ex02_df = (
     customers.filter(F.col("state")=="CA")
 )
-#ex02_df.show(truncate=False)
+ex02_df.show(truncate=False)'''
 
 #########################################################################
 # EXERCISE 03 (Easy)
@@ -59,13 +65,13 @@ ex02_df = (
 # Goal: Filter txns where amount > 50
 # Return columns: txn_id, customer_id, amount
 #########################################################################
-ex03_df = (
-    # TODO
+# TODO
+'''ex03_df = (
     txns
     .filter(F.col("amount")>50)
     .select("txn_id","customer_id","amount")
 )
-#ex03_df.show(truncate=False)
+ex03_df.show(truncate=False)'''
 
 #########################################################################
 # EXERCISE 04 (Easy)
@@ -73,13 +79,13 @@ ex03_df = (
 # Goal: Filter txns where merchant == "ElectroMart"
 # Return columns: txn_id, customer_id, merchant, amount
 #########################################################################
-ex04_df = (
-    # TODO
+# TODO
+'''ex04_df = (
     txns
     .filter(F.col("merchant")=="ElectroMart")
     .select("txn_id","customer_id","merchant","amount")
 )
-#ex04_df.show(truncate=False)
+ex04_df.show(truncate=False)'''
 
 #########################################################################
 # EXERCISE 05 (Easy)
@@ -87,26 +93,26 @@ ex04_df = (
 # Goal: Filter txns where customer_id is in {1,2,3}
 # Return columns: txn_id, customer_id, txn_ts, amount
 #########################################################################
-ex05_df = (
-    # TODO
+# TODO
+'''ex05_df = (
     txns
     .filter(F.col("customer_id").isin(1,2,3))
     .select("txn_id","customer_id","txn_ts","amount")
 )
-#ex05_df.show(truncate=False)
+ex05_df.show(truncate=False)'''
 
 #########################################################################
 # EXERCISE 06 (Easy)
 # Goal: Filter customers where first_name is missing OR blank
 # Return columns: customer_id, first_name, last_name
 #########################################################################
-ex06_df = (
-    # TODO
+# TODO
+'''ex06_df = (
     customers
     .filter((F.col("first_name").isNull()) | (F.trim(F.col("first_name"))==""))
     .select("customer_id","first_name","last_name")
 )
-#ex06_df.show(truncate=False)
+ex06_df.show(truncate=False)'''
 
 #########################################################################
 # EXERCISE 07 (Easy -> Medium)
@@ -114,13 +120,13 @@ ex06_df = (
 # Goal: Filter txns where amount is between 10 and 100 inclusive
 # Return columns: txn_id, customer_id, amount, merchant
 #########################################################################
-ex07_df = (
-    # TODO
+# TODO
+'''ex07_df = (
     txns
     .filter(F.col("amount").between(10,100))
     .select("txn_id","customer_id","amount","merchant")
 )
-#ex07_df.show(truncate=False)
+ex07_df.show(truncate=False)'''
 
 #########################################################################
 # EXERCISE 08 (Easy -> Medium)
@@ -128,13 +134,13 @@ ex07_df = (
 # Goal: Filter txns where merchant != "GroceryTown" AND amount 10->100 inclusive
 # Return columns: txn_id, customer_id, amount, merchant
 #########################################################################
-ex08_df = (
-    # TODO  
+# TODO
+'''ex08_df = (
     txns
     .filter((F.col("merchant")!="GroceryTown") & (F.col("amount").between(10,100)))
     .select("txn_id","customer_id","amount","merchant")
 )
-#ex08_df.show(truncate=False)
+ex08_df.show(truncate=False)'''
 
 #########################################################################
 # EXERCISE 09 (Medium)
@@ -142,13 +148,14 @@ ex08_df = (
 # Goal: Customers who signed up on or after 2025-03-01
 # Return columns: customer_id, signup_date
 #########################################################################
-ex09_df = (
+# TODO
+'''ex09_df = (
     customers
     .withColumn("signup_date", F.to_date("signup_date")) # Convert signup_date to a proper DATE type
     .filter(F.col("signup_date") >= F.lit("2025-03-01").cast("date"))
     .select("customer_id", "signup_date")
 )
-#ex09_df.show(truncate=False)
+ex09_df.show(truncate=False)'''
 
 #########################################################################
 # EXERCISE 10 (Medium)
@@ -159,23 +166,34 @@ ex09_df = (
 # - "large" otherwise
 # Return columns: txn_id, amount, amount_bucket
 #########################################################################
-ex10_df = (
-    # TODO
+# TODO
+'''ex10_df = (
+    txns
+    .withColumn(
+        "amount_bucket",
+        F.when(F.col("amount")<20,"small")
+        .when(F.col("amount")<100,"medium")
+        .otherwise("large")
+    )
 )
-# ex10_df.show(truncate=False)
+ex10_df.show(truncate=False)'''
 
 #########################################################################
 # EXERCISE 11 (Medium)
 #------------------------------------------------------------------------
 # Goal: Standardize customers:
-# - trim first_name and last_name
-# - uppercase state
+#   - trim first_name and last_name
+#   - uppercase state
 # Return full standardized customers DataFrame
 #########################################################################
-customers_std = (
-    # TODO
+# TODO
+'''customers_std = (
+    customers
+    .withColumn("first_name",F.trim(F.col("first_name")))
+    .withColumn("last_name", F.trim(F.col("last_name")))
+    .withColumn("state"     ,F.upper(F.trim(F.col("state"))))
 )
-# customers_std.show(truncate=False)
+customers_std.show(truncate=False)'''
 
 #########################################################################
 # EXERCISE 12 (Medium)
@@ -183,14 +201,14 @@ customers_std = (
 # Goal: Create customers_quarantine where first_name is missing OR blank
 # And customers_clean as the remaining records
 #########################################################################
-customers_quarantine = (
-    # TODO
-)
+# TODO
+'''
+# Condition: missing or blank (after trimming)
+is_bad_first = F.col("first_name").isNull() | (F.trim(F.col("first_name")) == "")
+cust_quarantine = customers.where(is_bad_first)
+cust_clean      = customers.where(~is_bad_first)
+print("cust_clean:", cust_clean.count(), "cust_quarantine:", cust_quarantine.count())'''
 
-customers_clean = (
-    # TODO
-)
-# print("customers_clean:", customers_clean.count(), "customers_quarantine:", customers_quarantine.count())
 
 #########################################################################
 # EXERCISE 13 (Medium -> Hard)
@@ -202,11 +220,10 @@ customers_clean = (
 txns_quarantine = (
     # TODO
 )
-
 txns_clean = (
     # TODO
 )
-# print("txns_clean:", txns_clean.count(), "txns_quarantine:", txns_quarantine.count())
+print("txns_clean:", txns_clean.count(), "txns_quarantine:", txns_quarantine.count())
 
 #########################################################################
 # EXERCISE 14 (Hard)
@@ -216,10 +233,11 @@ txns_clean = (
 # - "missing_customer_id" when customer_id is null
 # (If both happen, choose one consistent rule)
 #########################################################################
-txns_quarantine_reasoned = (
-    # TODO
+# TODO
+'''txns_quarantine_reasoned = (
+
 )
-# txns_quarantine_reasoned.show(truncate=False)
+txns_quarantine_reasoned.show(truncate=False)'''
 
 #########################################################################
 # EXERCISE 15 (Hard)
@@ -229,14 +247,14 @@ txns_quarantine_reasoned = (
 # - txns_bad_fk
 # - txns_good_fk
 #########################################################################
-txns_bad_fk = (
-    # TODO
-)
+# TODO
+'''txns_bad_fk = (
 
-txns_good_fk = (
-    # TODO
 )
-# print("txns_good_fk:", txns_good_fk.count(), "txns_bad_fk:", txns_bad_fk.count())
+txns_good_fk = (
+
+)
+print("txns_good_fk:", txns_good_fk.count(), "txns_bad_fk:", txns_bad_fk.count())'''
 
 #########################################################################
 # EXERCISE 16 (Hard)
@@ -244,10 +262,10 @@ txns_good_fk = (
 # Goal: Join txns_good_fk to customers_clean (left join) and return:
 # txn_id, customer_id, first_name, state, amount, merchant
 #########################################################################
-enriched_txns = (
-    # TODO
+# TODO
+'''enriched_txns = (
 )
-# enriched_txns.show(truncate=False)
+enriched_txns.show(truncate=False)'''
 
 #########################################################################
 # EXERCISE 17 (Hard)
@@ -258,10 +276,11 @@ enriched_txns = (
 # - avg_spend (rounded to 2 decimals)
 # Return one row per customer_id
 #########################################################################
-customer_kpis = (
-    # TODO
+# TODO
+'''customer_kpis = (
+
 )
-# customer_kpis.show(truncate=False)
+customer_kpis.show(truncate=False)'''
 
 #########################################################################
 # EXERCISE 18 (Hard -> Very Hard)
@@ -269,10 +288,11 @@ customer_kpis = (
 # Goal: Add last_txn_ts (max txn_ts) to customer_kpis
 # Return columns: customer_id, txn_count, total_spend, avg_spend, last_txn_ts
 #########################################################################
-customer_kpis_with_last = (
-    # TODO
+# TODO
+'''customer_kpis_with_last = (
+
 )
-# customer_kpis_with_last.show(truncate=False)
+customer_kpis_with_last.show(truncate=False)'''
 
 #########################################################################
 # EXERCISE 19 (Very Hard)
@@ -283,10 +303,11 @@ customer_kpis_with_last = (
 # - total_spend = 0.0
 # - avg_spend = 0.0
 #########################################################################
-customer_analytics = (
-    # TODO
+# TODO
+'''customer_analytics = (
+
 )
-# customer_analytics.orderBy(F.desc("total_spend")).show(truncate=False)
+customer_analytics.orderBy(F.desc("total_spend")).show(truncate=False)'''
 
 #########################################################################
 # EXERCISE 20 (Very Hard)
