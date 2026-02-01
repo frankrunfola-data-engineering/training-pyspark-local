@@ -1,16 +1,11 @@
-import sys
-from pathlib import Path
-PROJECT_ROOT = Path(__file__).resolve().parents[2]  # add project root to sys.path so `import src.<FOLDER>` works
-sys.path.insert(0, str(PROJECT_ROOT))
-
 #########################################################################
 # File   : scripts/06_exercises/05_excercises.py
 # Author : Frank Runfola
 # Date   : 1/25/2026
 # -----------------------------------------------------------------------
-# Run cmd:
-#   cd /projects/pyspark-local-intro
-#   python -m scripts.06_exercises.05_excercises
+# Run (from repo root):
+#   cd ~/projects/training-pyspark-local
+#   python -m scripts.02_exercises.01_excercises
 # -----------------------------------------------------------------------
 # Description:
 #   Combined exercises (Select/Filter + Cleaning/Quarantine + KPIs + Joins).
@@ -19,7 +14,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 #########################################################################
 
 from pyspark.sql import functions as F
-from src.spark_utils import get_spark
+from training_pyspark_local.spark_utils import get_spark
 
 spark = get_spark("05_excercises")
 

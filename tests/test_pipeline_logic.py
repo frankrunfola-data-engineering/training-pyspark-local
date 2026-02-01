@@ -8,7 +8,7 @@ from pyspark.sql import types as T
 def spark():
     spark = (
         SparkSession.builder
-        .appName("pyspark-local-intro-tests")
+        .appName("training-pyspark-local-tests")
         .master("local[*]")
         .config("spark.ui.enabled", "false")
         .getOrCreate()

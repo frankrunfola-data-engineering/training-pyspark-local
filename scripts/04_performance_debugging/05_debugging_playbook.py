@@ -1,17 +1,11 @@
-import sys
-from pathlib import Path
-
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(PROJECT_ROOT))
-
 #########################################################################
 # File   : scripts/08_performance_debugging/08_05_debugging_playbook.py
 # Author : Frank Runfola
 # Date   : 1/30/2026
 # -----------------------------------------------------------------------
-# Run cmd:
-#   cd /projects/pyspark-local-intro
-#   python -m scripts.08_performance_debugging.08_05_debugging_playbook
+# Run (from repo root):
+#   cd ~/projects/training-pyspark-local
+#   python -m scripts.04_performance_debugging.05_debugging_playbook
 # -----------------------------------------------------------------------
 # Description:
 #   A practical debugging playbook: sanity checks, counting nulls, explain, and quick perf timing.
@@ -19,7 +13,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 import time
 from pyspark.sql import functions as F
-from src.spark_utils import get_spark
+from training_pyspark_local.spark_utils import get_spark
 
 spark = get_spark("08_05_debugging_playbook")
 spark.sparkContext.setLogLevel("ERROR")

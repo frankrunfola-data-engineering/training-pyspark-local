@@ -1,17 +1,11 @@
-import sys
-from pathlib import Path
-
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(PROJECT_ROOT))
-
 #########################################################################
 # File   : scripts/08_performance_debugging/08_02_broadcast_aqe_skew_salting.py
 # Author : Frank Runfola
 # Date   : 1/30/2026
 # -----------------------------------------------------------------------
-# Run cmd:
-#   cd /projects/pyspark-local-intro
-#   python -m scripts.08_performance_debugging.08_02_broadcast_aqe_skew_salting
+# Run (from repo root):
+#   cd ~/projects/training-pyspark-local
+#   python -m scripts.04_performance_debugging.02_broadcast_aqe_skew_salting
 # -----------------------------------------------------------------------
 # Description:
 #   Broadcast, AQE, skew + salting (conceptual + small runnable example).
@@ -19,7 +13,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 from pyspark.sql import functions as F
 from pyspark.sql import types as T
-from src.spark_utils import get_spark
+from training_pyspark_local.spark_utils import get_spark
 
 spark = get_spark("08_02_broadcast_aqe_skew_salting")
 spark.sparkContext.setLogLevel("ERROR")

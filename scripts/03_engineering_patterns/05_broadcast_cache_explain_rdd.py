@@ -1,24 +1,18 @@
-import sys
-from pathlib import Path
-
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(PROJECT_ROOT))
-
 #########################################################################
 # File   : scripts/07_engineering_patterns/07_05_broadcast_cache_explain_rdd.py
 # Author : Frank Runfola
 # Date   : 1/30/2026
 # -----------------------------------------------------------------------
-# Run cmd:
-#   cd /projects/pyspark-local-intro
-#   python -m scripts.07_engineering_patterns.07_05_broadcast_cache_explain_rdd
+# Run (from repo root):
+#   cd ~/projects/training-pyspark-local
+#   python -m scripts.03_engineering_patterns.05_broadcast_cache_explain_rdd
 # -----------------------------------------------------------------------
 # Description:
 #   Broadcast joins, caching, explain plans, plus tiny RDD fundamentals (because interviews still ask).
 #########################################################################
 
 from pyspark.sql import functions as F
-from src.spark_utils import get_spark
+from training_pyspark_local.spark_utils import get_spark
 
 spark = get_spark("07_05_broadcast_cache_explain_rdd")
 spark.sparkContext.setLogLevel("ERROR")

@@ -3,7 +3,7 @@
 
 from pyspark.sql import SparkSession
 
-def get_spark(app_name: str = "pyspark-local-intro") -> SparkSession:
+def get_spark(app_name: str = "training-pyspark-local") -> SparkSession:
     return (
         SparkSession.builder
         .appName(app_name)  

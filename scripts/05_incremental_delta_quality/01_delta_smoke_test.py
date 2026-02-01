@@ -1,24 +1,18 @@
-import sys
-from pathlib import Path
-
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(PROJECT_ROOT))
-
 #########################################################################
 # File   : scripts/09_incremental_delta_quality/09_01_delta_smoke_test.py
 # Author : Frank Runfola
 # Date   : 1/30/2026
 # -----------------------------------------------------------------------
-# Run cmd:
-#   cd /projects/pyspark-local-intro
-#   python -m scripts.09_incremental_delta_quality.09_01_delta_smoke_test
+# Run (from repo root):
+#   cd ~/projects/training-pyspark-local
+#   python -m scripts.05_incremental_delta_quality.01_delta_smoke_test
 # -----------------------------------------------------------------------
 # Description:
 #   Delta Lake smoke test: write/read a Delta table locally (graceful if Delta isn't installed).
 #########################################################################
 
 from pyspark.sql import functions as F
-from src.spark_utils import get_spark
+from training_pyspark_local.spark_utils import get_spark
 
 spark = get_spark("09_01_delta_smoke_test")
 spark.sparkContext.setLogLevel("ERROR")

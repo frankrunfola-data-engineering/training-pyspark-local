@@ -1,17 +1,11 @@
-import sys
-from pathlib import Path
-
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(PROJECT_ROOT))
-
 #########################################################################
 # File   : scripts/10_spark_sql_advanced/10_exercises_sql_views.py
 # Author : Frank Runfola
 # Date   : 1/25/2026
 # ---------------------------------------------------------------------------------
-# Run cmd:
-#   cd /projects/pyspark-local-intro
-#   python -m scripts.10_spark_sql_advanced.10_exercises_sql_views
+# Run (from repo root):
+#   cd ~/projects/training-pyspark-local
+#   python -m scripts.06_spark_sql_advanced.06_exercises_sql_views
 # ---------------------------------------------------------------------------------
 # Description:
 #   Spark SQL exercises (CTEs + windows + dedupe + cohort-style logic).
@@ -21,7 +15,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 #########################################################################
 
 from pyspark.sql import functions as F
-from src.spark_utils import get_spark
+from training_pyspark_local.spark_utils import get_spark
 
 spark = get_spark("10_exercises_sql_views")
 

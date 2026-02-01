@@ -23,21 +23,21 @@ java -version
 
 **Windows (PowerShell)**
 ```powershell
-python -m venv .venv
+python3 -m venv .venv
 .venv\Scripts\Activate.ps1
-python -m pip install --upgrade pip
+python3 -m pip install --upgrade pip
 pip install -r requirements.txt
+pip install -e .
 ```
 
 **WSL/Linux/macOS**
 ```bash
-rm -rf .venv                            # delete existing venv (optional)
-python3 -m venv .venv                   # create venv
-source .venv/bin/activate               # activate
-which python
-python --version
+rm -rf .venv                         # optional: delete existing venv
+python3 -m venv .venv                # create venv
+source .venv/bin/activate            # activate
 python -m pip install --upgrade pip
 pip install -r requirements.txt
+pip install -e .
 ```
 
 ### 2) VS Code interpreter
@@ -51,10 +51,11 @@ pip install -r requirements.txt
 > Spark writes outputs as **folders** (that’s normal).
 
 ```text
-pyspark-local-intro/
+training-pyspark-local/
 ├─ data/
 │  ├─ raw/                         # input CSVs
 │  └─ out/                         # Spark outputs (folders)
+|
 ├─ scripts/
 │  ├─ 01_foundations/
 │  │  ├─ __init__.py
@@ -63,10 +64,12 @@ pyspark-local-intro/
 │  │  ├─ 03_cleaning.py
 │  │  ├─ 04_aggregations.py
 │  │  └─ 05_joins.py
+|  |
 │  ├─ 02_exercises/
 │  │  ├─ __init__.py
 │  │  ├─ 01_exercises.py
 │  │  └─ 02_exercises_advanced.py
+|  |
 │  ├─ 03_engineering_patterns/
 │  │  ├─ __init__.py
 │  │  ├─ 01_schema_enforcement.py
@@ -75,6 +78,7 @@ pyspark-local-intro/
 │  │  ├─ 04_partitioned_writes.py
 │  │  ├─ 05_broadcast_cache_explain_rdd.py
 │  │  └─ 06_exercises_engineering_patterns.py
+|  |
 │  ├─ 04_performance_debugging/
 │  │  ├─ __init__.py
 │  │  ├─ 01_explain_and_shuffles.py
@@ -83,6 +87,7 @@ pyspark-local-intro/
 │  │  ├─ 04_partition_pruning_small_files.py
 │  │  ├─ 05_debugging_playbook.py
 │  │  └─ 06_exercises_performance_debugging.py
+|  |
 │  ├─ 05_incremental_delta_quality/
 │  │  ├─ __init__.py
 │  │  ├─ 01_delta_smoke_test.py
@@ -91,6 +96,7 @@ pyspark-local-intro/
 │  │  ├─ 04_delta_merge_upsert.py
 │  │  ├─ 05_incremental_gold_kpis.py
 │  │  └─ 06_exercises_incremental_delta_quality.py
+|  |
 │  └─ 06_spark_sql_advanced/
 │     ├─ __init__.py
 │     ├─ 01_temp_views_sql_basics.py
@@ -99,8 +105,10 @@ pyspark-local-intro/
 │     ├─ 04_cohorts.py
 │     ├─ 05_sql_perf_hints.py
 │     └─ 06_exercises_sql_views.py
+|  
 ├─ src/
 │  └─ spark_utils.py
+|  
 ├─ requirements.txt
 └─ README.md
 ```

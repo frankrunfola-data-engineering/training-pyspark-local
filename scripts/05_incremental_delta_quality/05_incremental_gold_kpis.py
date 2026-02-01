@@ -1,24 +1,18 @@
-import sys
-from pathlib import Path
-
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(PROJECT_ROOT))
-
 #########################################################################
 # File   : scripts/09_incremental_delta_quality/09_05_incremental_gold_kpis.py
 # Author : Frank Runfola
 # Date   : 1/30/2026
 # -----------------------------------------------------------------------
-# Run cmd:
-#   cd /projects/pyspark-local-intro
-#   python -m scripts.09_incremental_delta_quality.09_05_incremental_gold_kpis
+# Run (from repo root):
+#   cd ~/projects/training-pyspark-local
+#   python -m scripts.05_incremental_delta_quality.05_incremental_gold_kpis
 # -----------------------------------------------------------------------
 # Description:
 #   Incremental Gold aggregates: update KPIs by processing only new batches (simple pattern).
 #########################################################################
 
 from pyspark.sql import functions as F
-from src.spark_utils import get_spark
+from training_pyspark_local.spark_utils import get_spark
 
 spark = get_spark("09_05_incremental_gold_kpis")
 spark.sparkContext.setLogLevel("ERROR")

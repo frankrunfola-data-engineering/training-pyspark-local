@@ -1,20 +1,15 @@
-import sys
-from pathlib import Path
-PROJECT_ROOT = Path(__file__).resolve().parents[2]  # add project root to sys.path so `import src.<FOLDER>` works
-sys.path.insert(0, str(PROJECT_ROOT))
-
 ###################################################################################
 # File   : scripts/05_foundations/04_aggregations.py
 # Author : Frank Runfola
 # Date   : 1/25/2026
 # -----------------------------------------------------------------------
-# Run cmd:
-#   cd /projects/pyspark-local-intro
-#   python -m scripts.05_foundations.04_aggregations
+# Run (from repo root):
+#   cd ~/projects/training-pyspark-local
+#   python -m scripts.01_foundations.04_aggregations
 # -----------------------------------------------------------------------
 # Description:
 #   Aggregations + window functions to produce customer spend KPIs.
-#
+# -----------------------------------------------------------------------
 # Dependencies:
 #   - Expects cleaned transactions written by `02_cleaning.py` at:
 #       data/out/txns_clean
@@ -22,7 +17,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 from pyspark.sql import functions as F
 from pyspark.sql.window import Window
-from src.spark_utils import get_spark
+from training_pyspark_local.spark_utils import get_spark
 
 spark = get_spark("04_aggregations")
 spark.sparkContext.setLogLevel("ERROR")  # keep local console output readable

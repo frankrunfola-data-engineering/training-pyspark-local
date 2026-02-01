@@ -1,24 +1,18 @@
-import sys
-from pathlib import Path
-
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(PROJECT_ROOT))
-
 #########################################################################
 # File   : scripts/07_engineering_patterns/07_04_partitioned_writes.py
 # Author : Frank Runfola
 # Date   : 1/30/2026
 # -----------------------------------------------------------------------
-# Run cmd:
-#   cd /projects/pyspark-local-intro
-#   python -m scripts.07_engineering_patterns.07_04_partitioned_writes
+# Run (from repo root):
+#   cd ~/projects/training-pyspark-local
+#   python -m scripts.03_engineering_patterns.04_partitioned_writes
 # -----------------------------------------------------------------------
 # Description:
 #   Partitioned writes: write parquet partitioned by a column, then demonstrate partition pruning with filters.
 #########################################################################
 
 from pyspark.sql import functions as F
-from src.spark_utils import get_spark
+from training_pyspark_local.spark_utils import get_spark
 
 spark = get_spark("07_04_partitioned_writes")
 spark.sparkContext.setLogLevel("ERROR")

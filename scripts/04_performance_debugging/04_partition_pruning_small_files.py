@@ -1,24 +1,18 @@
-import sys
-from pathlib import Path
-
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(PROJECT_ROOT))
-
 #########################################################################
 # File   : scripts/08_performance_debugging/08_04_partition_pruning_small_files.py
 # Author : Frank Runfola
 # Date   : 1/30/2026
 # -----------------------------------------------------------------------
-# Run cmd:
-#   cd /projects/pyspark-local-intro
-#   python -m scripts.08_performance_debugging.08_04_partition_pruning_small_files
+# Run (from repo root):
+#   cd ~/projects/training-pyspark-local
+#   python -m scripts.04_performance_debugging.04_partition_pruning_small_files
 # -----------------------------------------------------------------------
 # Description:
 #   Partition pruning + the small-files problem (demo-friendly version).
 #########################################################################
 
 from pyspark.sql import functions as F
-from src.spark_utils import get_spark
+from training_pyspark_local.spark_utils import get_spark
 
 spark = get_spark("08_04_partition_pruning_small_files")
 spark.sparkContext.setLogLevel("ERROR")

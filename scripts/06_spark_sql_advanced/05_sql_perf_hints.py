@@ -1,23 +1,17 @@
-import sys
-from pathlib import Path
-
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(PROJECT_ROOT))
-
 #########################################################################
 # File   : scripts/10_spark_sql_advanced/10_05_sql_perf_hints.py
 # Author : Frank Runfola
 # Date   : 1/30/2026
 # -----------------------------------------------------------------------
-# Run cmd:
-#   cd /projects/pyspark-local-intro
-#   python -m scripts.10_spark_sql_advanced.10_05_sql_perf_hints
+# Run (from repo root):
+#   cd ~/projects/training-pyspark-local
+#   python -m scripts.06_spark_sql_advanced.05_sql_perf_hints
 # -----------------------------------------------------------------------
 # Description:
 #   SQL performance hints: caching temp views and using broadcast hints in SQL.
 #########################################################################
 
-from src.spark_utils import get_spark
+from training_pyspark_local.spark_utils import get_spark
 
 spark = get_spark("10_05_sql_perf_hints")
 spark.sparkContext.setLogLevel("ERROR")

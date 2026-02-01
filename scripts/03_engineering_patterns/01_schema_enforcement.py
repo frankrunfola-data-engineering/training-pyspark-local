@@ -1,17 +1,11 @@
-import sys
-from pathlib import Path
-
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(PROJECT_ROOT))
-
 #########################################################################
 # File   : scripts/07_engineering_patterns/07_01_schema_enforcement.py
 # Author : Frank Runfola
 # Date   : 1/30/2026
 # -----------------------------------------------------------------------
-# Run cmd:
-#   cd /projects/pyspark-local-intro
-#   python -m scripts.07_engineering_patterns.07_01_schema_enforcement
+# Run (from repo root):
+#   cd ~/projects/training-pyspark-local
+#   python -m scripts.03_engineering_patterns.01_schema_enforcement
 # -----------------------------------------------------------------------
 # Description:
 #   Schema enforcement basics: explicit schema, safe casts, and catching bad rows early.
@@ -19,7 +13,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 from pyspark.sql import functions as F
 from pyspark.sql import types as T
-from src.spark_utils import get_spark
+from training_pyspark_local.spark_utils import get_spark
 
 spark = get_spark("07_01_schema_enforcement")
 spark.sparkContext.setLogLevel("ERROR")

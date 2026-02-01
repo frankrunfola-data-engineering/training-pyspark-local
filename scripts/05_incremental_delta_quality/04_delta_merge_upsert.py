@@ -1,24 +1,18 @@
-import sys
-from pathlib import Path
-
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(PROJECT_ROOT))
-
 #########################################################################
 # File   : scripts/09_incremental_delta_quality/09_04_delta_merge_upsert.py
 # Author : Frank Runfola
 # Date   : 1/30/2026
 # -----------------------------------------------------------------------
-# Run cmd:
-#   cd /projects/pyspark-local-intro
-#   python -m scripts.09_incremental_delta_quality.09_04_delta_merge_upsert
+# Run (from repo root):
+#   cd ~/projects/training-pyspark-local
+#   python -m scripts.05_incremental_delta_quality.04_delta_merge_upsert
 # -----------------------------------------------------------------------
 # Description:
 #   Delta MERGE (upsert) pattern for Silver tables (graceful if Delta isn't installed).
 #########################################################################
 
 from pyspark.sql import functions as F
-from src.spark_utils import get_spark
+from training_pyspark_local.spark_utils import get_spark
 
 spark = get_spark("09_04_delta_merge_upsert")
 spark.sparkContext.setLogLevel("ERROR")

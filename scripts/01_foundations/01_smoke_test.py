@@ -1,16 +1,11 @@
-import sys
-from pathlib import Path
-PROJECT_ROOT = Path(__file__).resolve().parents[2]  # add project root to sys.path so `import src.<FOLDER>` works
-sys.path.insert(0, str(PROJECT_ROOT))
-
 ###################################################################################
 # File   : scripts/05_foundations/01_smoke_test.py
 # Author : Frank Runfola
 # Date   : 1/25/2026
 # -----------------------------------------------------------------------
-# Run cmd:
-#   cd /projects/pyspark-local-intro
-#   python -m scripts.05_foundations.01_smoke_test
+# Run (from repo root):
+#   cd ~/projects/training-pyspark-local
+#   python -m scripts.01_foundations.01_smoke_test
 # -----------------------------------------------------------------------
 # Description:
 #   Smoke test:
@@ -24,7 +19,7 @@ from pyspark.sql.types import (
     StructType, StructField,
     IntegerType, StringType, DoubleType, DateType
 )
-from src.spark_utils import get_spark
+from training_pyspark_local.spark_utils import get_spark
 
 spark = get_spark("01_smoke_test")
 spark.sparkContext.setLogLevel("ERROR")  # reduce Spark startup noise for local runs
