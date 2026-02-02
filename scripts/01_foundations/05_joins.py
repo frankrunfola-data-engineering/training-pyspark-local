@@ -77,7 +77,7 @@ print("\n--- Enriched transactions (sample) ---")
 # 2) Join KPIs to customers (one row per customer)
 # Goal:
 # - create a “customer analytics” table: customer attributes + aggregated metrics
-#
+# --------------------------------------------------------------------------------
 # Join type: LEFT
 # - keep all customers even if they have no transactions (KPIs will be null)
 # - then fill KPI nulls to make the table easier to use downstream
