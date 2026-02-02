@@ -41,7 +41,6 @@ ex01_df = (
 )
 ex01_df.show(n=3,truncate=False)
 
-# TODO
 ex01_df = (
     txns.select("txn_id", "customer_id","txn_ts", "amount","merchant")
 )
@@ -217,7 +216,9 @@ customers_std.show(truncate=False)'''
 is_bad_first = F.col("first_name").isNull() | (F.trim(F.col("first_name")) == "")
 cust_quarantine = customers.filter(is_bad_first)
 cust_clean      = customers.filter(~is_bad_first)
-#print("cust_clean:", cust_clean.count(), "cust_quarantine:", cust_quarantine.count())
+print("cust_clean:", cust_clean.count())
+print("cust_quarantine:", cust_quarantine.count())
+print("")
 
 #########################################################################
 # EXERCISE 13 (Medium -> Hard)
@@ -231,7 +232,9 @@ txns = txns.withColumn("amount", F.col("amount").cast("double"))  #first ensure 
 badData = (F.col("amount")<=0) | (F.col("customer_id").isNull())  #non-positive amt, or bad custId
 txns_quarantine = txns.filter(badData)
 txns_clean      = txns.filter(~badData)
-print("txns_clean:", txns_clean.count(), "txns_quarantine:", txns_quarantine.count())
+print("txns_clean:", txns_clean.count())
+print("txns_quarantine:", txns_quarantine.count())
+print("")
 #txns_quarantine.show(truncate=False)
 
 #########################################################################
@@ -296,54 +299,74 @@ print("txns_good_fk:", txns_good_fk.count(), "txns_bad_fk:", txns_bad_fk.count()
 # - Keep all original customer columns in both outputs
 #########################################################################
 # TODO
-'''badCustId  = (F.col("customer_id").isNull()) | (F.trim(F.col("customer_id").cast("string"))=="")
+'''
+badCustId = (  #Flag bad customer_id values (null or blank after trimming)
+    F.col("customer_id").isNull()
+    | (F.trim(F.col("customer_id").cast("string")) == "")
+)
 
-# Split customers into "bad id" vs "valid id" groups
-customers_bad_id  = customers.filter(badCustId)
+# Split customers by customer_id presence
+customers_bad_id = customers.filter(badCustId)
 customers_valid_id = customers.filter(~badCustId)
 
-# Build reference set of customer_ids that appear in txns_clean (dedup for faster joins)
+# Distinct customer_ids that appear in txns_clean (smaller join table)
 txns_keys = txns_clean.select("customer_id").dropDuplicates()
 
-# Orphans with valid IDs: customers with NO matching txn record 
+# Orphan customers (valid id) = no matching transaction (left_anti = "not found")
 customers_no_txns = customers_valid_id.join(txns_keys, on="customer_id", how="left_anti")
 
-# Active customers: customers with matching txn record
+# Active customers (at least one matching transaction) (inner = "found")
 customers_active = customers_valid_id.join(txns_keys, on="customer_id", how="inner")
 
-# Final orphan set = (bad-id customers) + (valid-id but no transactions)
+# Final orphan set (bad-id customers + valid-id customers with no transactions)
 customers_orphan = customers_bad_id.unionByName(customers_no_txns)
 
-# Quick sanity output: counts for each group
-print("customers_active:", customers_active.count(), "customers_orphan:", customers_orphan.count())'''
+# Quick check: print counts for each group
+print(f"customers_active: ${customers_active.count()}")
+print(f"customers_orphan: ${customers_orphan.count()}")
+print("")'''
 
 #########################################################################
 # EXERCISE 17 (Hard)
 #------------------------------------------------------------------------
-# Goal: Quarantine orphan transactions where txns_clean.customer_id has
-#       NO matching customer in customers_clean
+# Goal: Quarantine orphan transactions 
+#   Where txns_clean.customer_id has NO matching customer in cust_clean
 #------------------------------------------------------------------------
 ## Produce:
-# - txns_orphan_fk   (transactions with missing/invalid customer reference)
-# - txns_valid_fk    (transactions with a valid customer reference)
+#   - txns_orphan_fk   (transactions with missing/invalid customer reference)
+#   - txns_valid_fk    (transactions with a valid customer reference)
 #------------------------------------------------------------------------
 # Rules:
-# - Join key: customer_id
-# - Treat null/blank customer_id in txns_clean as orphan automatically
-# - Keep all original transaction columns in both outputs
+#   - Join key: customer_id
+#   - Treat null/blank customer_id in txns_clean as orphan automatically
+#   - Keep all original transaction columns in both outputs
 #########################################################################
 # TODO
-
-txns_orphan_fk = (
-    # TODO
+'''
+bad_cust_id = (  # Condition: txns_clean customer_id is missing/blank
+    F.col("customer_id").isNull()
+    | (F.trim(F.col("customer_id").cast("string")) == "")
 )
 
-txns_valid_fk = (
-    # TODO
-)
+# Split txns by customer_id presence
+txns_bad_id = txns_clean.filter(bad_cust_id)
+txns_with_id = txns_clean.filter(~bad_cust_id)
 
-print("txns_valid_fk:", txns_valid_fk.count(), "txns_orphan_fk:", txns_orphan_fk.count())
+# Small reference table of valid customer_ids (dedup for faster joins)
+cust_keys = cust_clean.select("customer_id").dropDuplicates()
 
+# Orphan FK txns: customer_id NOT found in cust_clean
+txns_missing_customer = txns_with_id.join(cust_keys, on="customer_id", how="left_anti")
+
+# Valid FK txns (customer_id found in cust_clean)
+txns_valid_fk = txns_with_id.join(cust_keys, on="customer_id", how="inner")
+
+# Final orphan set  (missing/blank id) + (id present but not in customers)
+txns_orphan_fk = txns_bad_id.unionByName(txns_missing_customer)
+
+print(f"txns_valid_fk: ${txns_valid_fk.count()}")
+print(f"txns_orphan_fk: ${txns_orphan_fk.count()}")
+print("")'''
 
 
 #########################################################################
@@ -353,34 +376,64 @@ print("txns_valid_fk:", txns_valid_fk.count(), "txns_orphan_fk:", txns_orphan_fk
 #       in an allowed reference table (allowed_pairs)
 #------------------------------------------------------------------------
 # Inputs:
-# - txns_clean: txn_id, customer_id, state, txn_type, amount
-# - allowed_pairs: state, txn_type
+#   - txns_clean: txn_id, customer_id, state, txn_type, amount
+#   - allowed_pairs: state, txn_type
 #------------------------------------------------------------------------
 # Produce:
-# - txns_bad_ref    (invalid (state, txn_type) OR missing keys)
-# - txns_good_ref   (remaining records)
+#   - txns_bad_ref    (invalid (state, txn_type) OR missing keys)
+#   - txns_good_ref   (remaining records)
 #------------------------------------------------------------------------
 # Rules:
-# - Normalize for matching:
-#   - state: trim + uppercase
-#   - txn_type: trim + lowercase
-# - If state OR txn_type is null/blank -> quarantine
-# - Add quarantine_reason to txns_bad_ref with one of:
-#   - "missing_state"
-#   - "missing_txn_type"
-#   - "invalid_state_txn_type"
+#   - Normalize for matching:
+#      - state: trim + uppercase
+#      - txn_type: trim + lowercase
+#   - If state OR txn_type is null/blank -> quarantine
+#   - Add quarantine_reason to txns_bad_ref with one of:
+#      - "missing_state"
+#      - "missing_txn_type"
+#      - "invalid_state_txn_type"
 #########################################################################
 # TODO
-"""
-txns_bad_ref = (
+# 1) Normalize both txns_clean and allowed_pairs for matching
+txns_norm = (
+    txns_clean
+    .withColumn("state_norm", F.upper(F.trim(F.col("state"))))
+    .withColumn("txn_type_norm", F.lower(F.trim(F.col("txn_type"))))
 )
 
-txns_good_ref = (
+allowed_norm = (
+    allowed_pairs
+    .withColumn("state_norm", F.upper(F.trim(F.col("state"))))
+    .withColumn("txn_type_norm", F.lower(F.trim(F.col("txn_type"))))
+    .select("state_norm", "txn_type_norm")
+    .dropDuplicates()
 )
 
-print("txns_good_ref:", txns_good_ref.count(), "txns_bad_ref:", txns_bad_ref.count())
-"""
+# 2) Missing-key checks (Column expressions)
+state_missing = txns_norm["state_norm"].isNull() | (txns_norm["state_norm"] == "")
+type_missing  = txns_norm["txn_type_norm"].isNull() | (txns_norm["txn_type_norm"] == "")
 
+txns_missing_state = txns_norm.filter(state_missing).withColumn("quarantine_reason", F.lit("missing_state"))
+txns_missing_type  = txns_norm.filter(~state_missing & type_missing).withColumn("quarantine_reason", F.lit("missing_txn_type"))
+
+# 3) Pair validity check (only where both keys are present)
+txns_keys_present = txns_norm.filter(~state_missing & ~type_missing)
+
+txns_invalid_pair = (
+    txns_keys_present
+    .join(allowed_norm, on=["state_norm", "txn_type_norm"], how="left_anti")
+    .withColumn("quarantine_reason", F.lit("invalid_state_txn_type"))
+)
+
+txns_good_ref = txns_keys_present.join(allowed_norm, on=["state_norm", "txn_type_norm"], how="inner")
+
+# 4) Combine all quarantined rows
+txns_bad_ref = txns_missing_state.unionByName(txns_missing_type).unionByName(txns_invalid_pair)
+
+print("txns_bad_ref:", txns_bad_ref.count())
+print("txns_good_ref:", txns_good_ref.count())
+
+print("")
 
 #########################################################################
 # EXERCISE 19 (Hard)
